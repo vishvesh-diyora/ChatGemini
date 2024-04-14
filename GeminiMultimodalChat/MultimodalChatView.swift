@@ -38,6 +38,7 @@ struct MultimodalChatView: View {
                         }
                     }
                 }
+                .scrollIndicators(.hidden)
             })
             
             // MARK: Image preview
@@ -57,41 +58,46 @@ struct MultimodalChatView: View {
             }
             
             // MARK: Input fields
-            HStack {
-                PhotosPicker(selection: $photoPickerItems, maxSelectionCount: 3, matching: .images) {
-                    Image(systemName: "photo.stack.fill")
-                        .frame(width: 40, height: 40)
-                }
-                .onChange(of: photoPickerItems) {
-                    Task {
-                        selectedPhotoData.removeAll()
-                        for item in photoPickerItems {
-                            if let imageData = try await item.loadTransferable(type: Data.self) {
-                                selectedPhotoData.append(imageData)
+            ZStack {
+                Color.white.frame(height: 60)
+                HStack {
+                    PhotosPicker(selection: $photoPickerItems, maxSelectionCount: 3, matching: .images) {
+                        Image("addImageicon")
+                    }
+                    .onChange(of: photoPickerItems) {
+                        Task {
+                            selectedPhotoData.removeAll()
+                            for item in photoPickerItems {
+                                if let imageData = try await item.loadTransferable(type: Data.self) {
+                                    selectedPhotoData.append(imageData)
+                                }
                             }
                         }
                     }
-                }
-                
-                TextField("Enter a message...", text: $textInput)
-                    .font(.subheadline)
-                    .textFieldStyle(.plain)
-                    .textFieldStyle(.plain)
-                    .foregroundStyle(.black)
-                
-                if chatService.loadingResponse {
-                    // MARK: Loading indicator
-                    ProgressView()
-                        .tint(Color.white)
+                    
+                    TextField("", text: $textInput, prompt: Text("Enter a message...")
+                        .foregroundColor(.gray))
+                        .font(.subheadline)
+                        .textFieldStyle(.plain)
+                        .foregroundStyle(.black)
+                        .background(.clear)
+                        .frame(height: 40)
+                    
+                    
+                    if chatService.loadingResponse {
+                        // MARK: Loading indicator
+                        ProgressView()
+                            .tint(Color.black)
+                            .frame(width: 40, height: 40)
+                    } else {
+                        // MARK: Send button
+                        Button(action: sendMessage, label: {
+                            Image("sendicon")
+                        })
                         .frame(width: 40, height: 40)
-                } else {
-                    // MARK: Send button
-                    Button(action: sendMessage, label: {
-                        Image(systemName: "paperplane.fill")
-                    })
-                    .frame(width: 40, height: 40)
-                }
-            }
+                    }
+                }.padding(.all,10)
+            }.cornerRadius(30).padding(.bottom, 10)
         }
         .foregroundStyle(.white)
         .padding([.leading,.trailing], 10)
@@ -117,12 +123,13 @@ struct MultimodalChatView: View {
                                     .resizable()
                                     .scaledToFill()
                                     .frame(height: 150)
-                                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                                    .clipShape(RoundedRectangle(cornerRadius: 0))
                                     .containerRelativeFrame(.horizontal)
                             }
                         })
                         .scrollTargetLayout()
                     }
+                    .background(.gray)
                     .frame(height: 150)
                     if message.message.isEmpty {
                         ProgressView()
