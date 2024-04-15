@@ -17,28 +17,38 @@ struct MultimodalChatView: View {
     var body: some View {
         VStack {
             // MARK: Logo
-            Image(.geminiLogo)
+            Image("app-logo")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 200)
             
             // MARK: Chat message list
             ScrollViewReader(content: { proxy in
-                ScrollView {
-                    ForEach(chatService.messages) { chatMessage in
-                        // MARK: Chat message view
-                        chatMessageView(chatMessage)
-                    }
-                }
-                .onChange(of: chatService.messages) {
-                    guard let recentMessage = chatService.messages.last else { return }
-                    DispatchQueue.main.async {
-                        withAnimation {
-                            proxy.scrollTo(recentMessage.id, anchor: .bottom)
+                if chatService.messages.count > 0  {
+                    ScrollView {
+                        ForEach(chatService.messages) { chatMessage in
+                            // MARK: Chat message view
+                            chatMessageView(chatMessage)
+                        }
+                    } 
+                    .onChange(of: chatService.messages) {
+                        guard let recentMessage = chatService.messages.last else { return }
+                        DispatchQueue.main.async {
+                            withAnimation {
+                                proxy.scrollTo(recentMessage.id, anchor: .bottom)
+                            }
                         }
                     }
+                    .scrollIndicators(.hidden)
+                } else {
+                    VStack {
+                        Spacer()
+                        Text("Ask me anything with images.....")
+                            .font(.subheadline)
+                            .foregroundStyle(.gray)
+                        Spacer()
+                    }
                 }
-                .scrollIndicators(.hidden)
             })
             
             // MARK: Image preview
@@ -59,7 +69,8 @@ struct MultimodalChatView: View {
             
             // MARK: Input fields
             ZStack {
-                Color.white.frame(height: 60)
+                Color.white.frame(height: 60).overlay(RoundedRectangle(cornerRadius: 30)
+                    .stroke(LinearGradient(colors: [.green,.blue], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2))
                 HStack {
                     PhotosPicker(selection: $photoPickerItems, maxSelectionCount: 3, matching: .images) {
                         Image("addImageicon")
@@ -104,7 +115,7 @@ struct MultimodalChatView: View {
         .background {
             // MARK: Background
             ZStack {
-                Color.black
+                Color.white
             }
             .ignoresSafeArea()
         }

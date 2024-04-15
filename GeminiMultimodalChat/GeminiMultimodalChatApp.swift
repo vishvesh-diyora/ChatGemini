@@ -39,8 +39,8 @@ class SplashVideoViewController: UIViewController {
         super.viewDidLoad()
         splashimageview.frame = self.view.frame
         splashimageview.contentMode = .scaleAspectFit
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .white
         self.view.addSubview(splashimageview)
-        self.splashimageview.image = UIImage(named: "gemini-logo")
+        self.splashimageview.image = UIImage(named: "app-logo")
     }
 }
