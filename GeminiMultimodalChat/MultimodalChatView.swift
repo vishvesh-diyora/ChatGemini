@@ -2,7 +2,7 @@
 //  MultimodalChatView.swift
 //  GeminiMultimodalChat
 //
-//  Created by Anup D'Souza
+//  Created by Diyora Vishvesh
 //
 
 import SwiftUI
