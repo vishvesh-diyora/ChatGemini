@@ -1,6 +1,6 @@
 //
 //  MultimodalChatView.swift
-//  GeminiMultimodalChat
+//  imageChatBot
 //
 //  Created by Diyora Vishvesh
 //
